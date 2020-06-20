@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TextInput, Button, ScrollView, FlatList } from 'react-native';
 
+import LembreteItem from './components/LembreteItem';
+import LembreteInput from './components/LembreteInput';
+
 
 export default function App() {
 
-  const [lembrete, setLembrete] = useState('');
+  //const [lembrete, setLembrete] = useState('');
   const [lembretes, setLembretes] = useState([]);
 
   const [contadorLembretes, setContadorLembretes] = useState(0);
 
-  const capturarLembrete = (digitado) => {
-    setLembrete(digitado);
-  }
+  //const capturarLembrete = (digitado) => {
+  //   setLembrete(digitado);
+  // }
 
-  const adicionarLembrete = () => {
+  const adicionarLembrete = (lembrete) => {
     setLembretes(lembretes => {
       setContadorLembretes(contadorLembretes + 1);
       return [{ key: contadorLembretes.toString(), value: lembrete }, ...lembretes];
@@ -21,38 +24,33 @@ export default function App() {
     console.log(lembrete);
   }
 
+  const apagarLembretes = () => {
+    setLembretes([]);
+  }
+
+  const removerLembrete = (keyASerRemovida) => {
+    setLembretes(lembretes => {
+      return lembretes.filter((lembrete) => {
+        return lembrete.key !== keyASerRemovida
+      })
+    })
+  }
+
 
   return (
     <View style={styles.telaPrincipalView}>
 
-      <View style={styles.lembreteView}>
-        {/* usuário irá inserir lembretes aqui*/}
-        <TextInput
-          placeholder="Lembrar..."
-          style={styles.lembreteTextInput}
-          onChangeText={capturarLembrete}
-          value={lembrete} />
-        <View style={{ width: '80%', marginTop: 8 }}>
-          <Button
-            title="Adicionar lembrete"
-            onPress={adicionarLembrete} />
-        </View>
-        <View style={{ width: '80%', marginTop: 8 }}>
-          <Button
-            title="Limpar lembretes"
-            onPress={() => setLembretes([])} />
-        </View>
-
-      </View>
+      <LembreteInput onAdicionarLembrete={adicionarLembrete} onApagarTudo={apagarLembretes} />
 
       <View>
         <FlatList
           data={lembretes}
           renderItem={
             lembrete => (
-              <View style={styles.itemNaLista}>
-                <Text>{lembrete.item.value}</Text>
-              </View>
+              <LembreteItem
+                chave={lembrete.item.key}
+                lembrete={lembrete.item.value}
+                onDelete={removerLembrete} />
             )
           }
         />
